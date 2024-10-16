@@ -9,7 +9,8 @@
   "opening_amount",
   "closing_amount",
   "expected_amount",
-  "difference"
+  "difference",
+  "total_sales"
  ],
  "fields": [
   {
@@ -53,11 +54,18 @@
    "label": "Difference",
    "options": "company:company_currency",
    "read_only": 1
+  },
+  {
+   "fieldname": "total_sales",
+   "fieldtype": "Currency",
+   "label": "Total Sales",
+   "options": "company:company_currency",
+   "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-09-29 02:59:35.699400",
+ "modified": "2024-10-16 14:31:22.114874",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "POS Closing Shift Detail",
@@ -66,5 +74,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

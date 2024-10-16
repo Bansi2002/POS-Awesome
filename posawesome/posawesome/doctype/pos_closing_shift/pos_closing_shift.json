@@ -31,6 +31,8 @@
   "total_quantity",
   "column_break_16",
   "taxes",
+  "remarks_section",
+  "remarks",
   "section_break_14",
   "amended_from"
  ],
@@ -196,11 +198,21 @@
   {
    "fieldname": "section_break_if3m1",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Long Text",
+   "label": "Remarks"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2023-06-12 03:01:49.146706",
+ "modified": "2024-10-16 15:29:22.358032",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "POS Closing Shift",
