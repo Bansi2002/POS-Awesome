@@ -202,7 +202,7 @@
    "fieldname": "discount_type",
    "fieldtype": "Select",
    "label": "Discount Type",
-   "options": "\nRate\nDiscount Percentage\nDiscount Amount"
+   "options": "\nRate\nDiscount Percentage\nDiscount Amount\nNormal Customer Discount\nSpecial Occasion Discount\nStaff Discount"
   },
   {
    "fieldname": "column_break_26",
@@ -308,10 +308,12 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "modified": "2021-07-25 17:09:55.634113",
+ "links": [],
+ "modified": "2024-10-16 19:18:42.025890",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "POS Offer",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -385,5 +387,6 @@
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
