@@ -1317,6 +1317,7 @@ def get_offers(profile):
     return data
 
 
+
 @frappe.whitelist()
 def get_customer_addresses(customer):
     return frappe.db.sql(
