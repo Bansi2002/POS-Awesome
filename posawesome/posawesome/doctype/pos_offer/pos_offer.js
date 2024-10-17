@@ -94,8 +94,8 @@ const controllers = (frm) => {
 	frm.toggle_display('discount_amount', frm.doc.discount_type === 'Discount Amount');
 	frm.toggle_reqd('discount_amount', frm.doc.discount_type === 'Discount Amount');
 
-	frm.toggle_display('discount_percentage', frm.doc.discount_type === 'Discount Percentage');
-	frm.toggle_reqd('discount_percentage', frm.doc.discount_type === 'Discount Percentage');
+	frm.toggle_display('discount_percentage', frm.doc.discount_type === 'Discount Percentage' || frm.doc.discount_type === 'Special Occasion Discount' || frm.doc.discount_type === 'Normal Customer Discount' || frm.doc.discount_type === 'Staff Discount');
+	frm.toggle_reqd('discount_percentage', frm.doc.discount_type === 'Discount Percentage' || frm.doc.discount_type === 'Special Occasion Discount' || frm.doc.discount_type === 'Normal Customer Discount' || frm.doc.discount_type === 'Staff Discount');
 
 	frm.toggle_display('loyalty_point_scheme_section', frm.doc.offer === 'Loyalty Point');
 	frm.toggle_display('loyalty_program', frm.doc.offer === 'Loyalty Point');
@@ -105,9 +105,9 @@ const controllers = (frm) => {
 	frm.toggle_reqd('loyalty_points', frm.doc.offer === 'Loyalty Point');
 
 	if (frm.doc.offer === 'Grand Total') {
-		frm.set_df_property('discount_type', 'options', ['Discount Percentage']);
+		frm.set_df_property('discount_type', 'options', ['Discount Percentage', 'Normal Customer Discount', 'Special Occasion Discount' , 'Staff Discount']);
 	} else {
-		frm.set_df_property('discount_type', 'options', ['', 'Rate', 'Discount Percentage', 'Discount Amount']);
+		frm.set_df_property('discount_type', 'options', ['', 'Rate', 'Discount Percentage', 'Discount Amount','Normal Customer Discount', 'Special Occasion Discount' , 'Staff Discount']);
 	}
 
 	if (frm.doc.apply_on === 'Transaction') {
@@ -124,6 +124,23 @@ const controllers = (frm) => {
 	}
 	if (frm.doc.apply_on !== 'Item Group' || frm.doc.offer !== 'Give Product' || frm.doc.apply_type !== 'Item Group') {
 		frm.set_value('replace_cheapest_item', 0);
+	}
+	if (frm.doc.discount_type === 'Normal Customer Discount') {
+		frm.set_value('discount_percentage', 5);
+		frm.set_df_property('discount_percentage', 'read_only', 1);
+	}
+	else if (frm.doc.discount_type === 'Special Occasion Discount') {
+		frm.set_value('discount_percentage', 10);
+		frm.set_df_property('discount_percentage', 'read_only', 1);
+	}
+	else if (frm.doc.discount_type === 'Staff Discount') {
+		frm.set_value('discount_percentage', 15);
+		frm.set_df_property('discount_percentage', 'read_only', 1);
+	}
+	else {
+		frm.set_value('discount_percentage', 0);
+		frm.set_df_property('discount_percentage', 'read_only', 0);
+
 	}
 
 };
