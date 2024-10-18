@@ -52,6 +52,9 @@ class POSClosingShift(Document):
             d.difference = +flt(d.closing_amount, precision) - flt(
                 d.expected_amount, precision
             )
+            d.total_saleas = +flt(d.closing_amount, precision) - flt(
+                d.opening_amount, precision
+            )
 
     def on_submit(self):
         opening_entry = frappe.get_doc("POS Opening Shift", self.pos_opening_shift)

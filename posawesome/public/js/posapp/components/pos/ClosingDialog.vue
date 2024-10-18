@@ -58,6 +58,17 @@
                 </template>
               </v-col>
             </v-row>
+            
+             <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="dialog_data.remarks"
+                  label="Remarks (e.g., Cash Shortage or Excess)"
+                  placeholder="Enter details about cash shortage or excess"
+                  clearable
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -97,7 +108,7 @@ export default {
         sortable: true,
         value: 'opening_amount',
       },
-      {
+      { 
         text: __('Closing Amount'),
         value: 'closing_amount',
         align: 'end',
@@ -114,6 +125,13 @@ export default {
       this.closingDialog = false;
     },
     submit_dialog() {
+
+      if (!this.dialog_data.remarks) {
+        this.dialog_data.remarks = 'No remarks provided.';
+      }
+      this.dialog_data.payment_reconciliation.forEach(payment => {
+         payment.total_sales = (payment.closing_amount || 0) - (payment.opening_amount || 0);
+      });
       evntBus.$emit('submit_closing_pos', this.dialog_data);
       this.closingDialog = false;
     },

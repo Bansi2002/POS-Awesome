@@ -201,7 +201,8 @@ def get_items(
                 has_batch_no,
                 has_serial_no,
                 max_discount,
-                brand
+                brand,
+                custom_discount_allowed
             FROM
                 `tabItem`
             WHERE

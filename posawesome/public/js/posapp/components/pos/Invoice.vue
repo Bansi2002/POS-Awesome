@@ -2255,7 +2255,7 @@ export default {
       if (offer.apply_on === "Item Code") {
         if (this.checkOfferCoupon(offer)) {
           this.items.forEach((item) => {
-            if (!item.posa_is_offer && item.item_code === offer.item) {
+            if (!item.posa_is_offer && item.custom_discount_allowed && item.item_code === offer.item) {
               const items = [];
               if (
                 offer.offer === "Item Price" &&
@@ -2289,7 +2289,7 @@ export default {
           let total_count = 0;
           let total_amount = 0;
           this.items.forEach((item) => {
-            if (!item.posa_is_offer && item.item_group === offer.item_group) {
+            if (!item.posa_is_offer && item.custom_discount_allowed && item.item_group === offer.item_group) {
               if (
                 offer.offer === "Item Price" &&
                 item.posa_offer_applied &&
@@ -2326,7 +2326,7 @@ export default {
           let total_count = 0;
           let total_amount = 0;
           this.items.forEach((item) => {
-            if (!item.posa_is_offer && item.brand === offer.brand) {
+            if (!item.posa_is_offer && item.custom_discount_allowed  && item.brand === offer.brand) {
               if (
                 offer.offer === "Item Price" &&
                 item.posa_offer_applied &&
@@ -2360,7 +2360,7 @@ export default {
         if (this.checkOfferCoupon(offer)) {
           let total_qty = 0;
           this.items.forEach((item) => {
-            if (!item.posa_is_offer && !item.posa_is_replace) {
+            if (!item.posa_is_offer && item.custom_discount_allowed  && !item.posa_is_replace) {
               total_qty += item.stock_qty;
             }
           });
