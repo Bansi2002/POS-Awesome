@@ -131,17 +131,17 @@ const controllers = (frm) => {
 	}
 	else if (frm.doc.discount_type === 'Special Occasion Discount') {
 		frm.set_value('discount_percentage', 10);
-	// 	frm.set_df_property('discount_percentage', 'read_only', 1);
+		frm.set_df_property('discount_percentage', 'read_only', 1);
 	}
 	else if (frm.doc.discount_type === 'Staff Discount') {
 		frm.set_value('discount_percentage', 15);
-		// frm.set_df_property('discount_percentage', 'read_only', 1);
+		frm.set_df_property('discount_percentage', 'read_only', 1);
 	}
-	// else {
-	// 	frm.set_value('discount_percentage', 0);
-	// 	// frm.set_df_property('discount_percentage', 'read_only', 0);
+	else {
+		// frm.set_value('discount_percentage', 0);
+		frm.set_df_property('discount_percentage', 'read_only', 0);
 
-	// }
+	}
 
 };
 
