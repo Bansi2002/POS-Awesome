@@ -66,6 +66,7 @@
                   label="Remarks (e.g., Cash Shortage or Excess)"
                   placeholder="Enter details about cash shortage or excess"
                   clearable
+                  :rules="[(v) => !!v || 'Remarks are required']"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -127,8 +128,11 @@ export default {
     submit_dialog() {
 
       if (!this.dialog_data.remarks) {
-        this.dialog_data.remarks = 'No remarks provided.';
-      }
+      
+      this.$refs.remarksInput.validate(); 
+      return; 
+    }
+
       this.dialog_data.payment_reconciliation.forEach(payment => {
          payment.total_sales = (payment.closing_amount || 0) - (payment.opening_amount || 0);
       });

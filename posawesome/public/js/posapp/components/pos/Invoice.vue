@@ -1718,6 +1718,7 @@ export default {
           items_data: items,
         },
         callback: function (r) {
+         
           if (r.message) {
             items.forEach((item) => {
               const updated_item = r.message.find(
@@ -2643,7 +2644,7 @@ export default {
       new_item.discount_amount =
         offer.discount_type === "Discount Amount" ? offer.discount_amount : 0;
       new_item.discount_percentage =
-        offer.discount_type === "Discount Percentage"
+        offer.discount_type === "Discount Percentage"  || offer.discount_type === "Normal Customer Discount" || offer.discount_type === "Special Occasion Discount" ||offer.discount_type === "Staff Discount"
           ? offer.discount_percentage
           : 0;
       new_item.discount_amount_per_item = 0;
@@ -2658,14 +2659,14 @@ export default {
       new_item.posa_delivery_date = "";
       new_item.is_free_item =
         (offer.discount_type === "Rate" && !offer.rate) ||
-        (offer.discount_type === "Discount Percentage" &&
+        ((offer.discount_type === "Discount Percentage"  || offer.discount_type === "Normal Customer Discount" || offer.discount_type === "Special Occasion Discount" ||offer.discount_type === "Staff Discount")&&
           offer.discount_percentage == 0)
           ? 1
           : 0;
       new_item.posa_row_id = this.makeid(20);
       new_item.price_list_rate =
         (offer.discount_type === "Rate" && !offer.rate) ||
-        (offer.discount_type === "Discount Percentage" &&
+        ((offer.discount_type === "Discount Percentage"  || offer.discount_type === "Normal Customer Discount" || offer.discount_type === "Special Occasion Discount" ||offer.discount_type === "Staff Discount") &&
           offer.discount_percentage == 0)
           ? 0
           : item.rate;
@@ -2686,7 +2687,7 @@ export default {
           if (!item_offers.includes(offer.row_id)) {
             if (offer.discount_type === "Rate") {
               item.rate = offer.rate;
-            } else if (offer.discount_type === "Discount Percentage") {
+            } else if (offer.discount_type === "Discount Percentage" || offer.discount_type === "Normal Customer Discount" || offer.discount_type === "Special Occasion Discount" ||offer.discount_type === "Staff Discount") {
               item.discount_percentage += offer.discount_percentage;
             } else if (offer.discount_type === "Discount Amount") {
               item.discount_amount += offer.discount_amount;
@@ -2708,7 +2709,7 @@ export default {
           if (originalOffer) {
             if (originalOffer.discount_type === "Rate") {
               item.rate = item.price_list_rate;
-            } else if (originalOffer.discount_type === "Discount Percentage") {
+            } else if (originalOffer.discount_type === "Discount Percentage"  || originalOffer.discount_type === "Normal Customer Discount" || originalOffer.discount_type === "Special Occasion Discount" || originalOffer.discount_type === "Staff Discount") {
               item.discount_percentage -= offer.discount_percentage;
               if (!item.discount_percentage) {
                 item.discount_percentage = 0;
