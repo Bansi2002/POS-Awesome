@@ -42,7 +42,7 @@
                       {{ currencySymbol(pos_profile.currency) }}
                       {{
                         (item.difference = formtCurrency(
-                          item.expected_amount - item.closing_amount
+                          item.closing_amount - item.expected_amount
                         ))
                       }}</template
                     >
@@ -59,7 +59,7 @@
               </v-col>
             </v-row>
             
-             <v-row>
+             <!-- <v-row>
               <v-col cols="12">
                 <v-text-field
                   v-model="dialog_data.remarks"
@@ -69,7 +69,7 @@
                   :rules="[(v) => !!v || 'Remarks are required']"
                 ></v-text-field>
               </v-col>
-            </v-row>
+            </v-row> -->
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -127,11 +127,11 @@ export default {
     },
     submit_dialog() {
 
-      if (!this.dialog_data.remarks) {
+    //   if (!this.dialog_data.remarks) {
       
-      this.$refs.remarksInput.validate(); 
-      return; 
-    }
+    //   this.$refs.remarksInput.validate(); 
+    //   return; 
+    // }
 
       this.dialog_data.payment_reconciliation.forEach(payment => {
          payment.total_sales = (payment.closing_amount || 0) - (payment.opening_amount || 0);
@@ -146,21 +146,31 @@ export default {
       this.closingDialog = true;
       this.dialog_data = data;
     });
+
     evntBus.$on('register_pos_profile', (data) => {
       this.pos_profile = data.pos_profile;
+    
       if (!this.pos_profile.hide_expected_amount) {
-        this.headers.push({
-          text: __('Expected Amount'),
-          value: 'expected_amount',
-          align: 'end',
-          sortable: false,
-        });
-        this.headers.push({
-          text: __('Difference'),
-          value: 'difference',
-          align: 'end',
-          sortable: false,
-        });
+        const hasExpectedAmount = this.headers.some(header => header.value === 'expected_amount');
+        const hasDifference = this.headers.some(header => header.value === 'difference');
+
+        if (!hasExpectedAmount) {
+          this.headers.push({
+            text: __('Expected Amount'),
+            value: 'expected_amount',
+            align: 'end',
+            sortable: false,
+          });
+        }
+
+        if (!hasDifference) {
+          this.headers.push({
+            text: __('Difference'),
+            value: 'difference',
+            align: 'end',
+            sortable: false,
+          });
+        }
       }
     });
   },
