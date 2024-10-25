@@ -14,6 +14,7 @@
   "pos_opening_shift",
   "section_break_5",
   "company",
+  "is_shortage",
   "column_break_7",
   "pos_profile",
   "user",
@@ -31,8 +32,6 @@
   "total_quantity",
   "column_break_16",
   "taxes",
-  "remarks_section",
-  "remarks",
   "section_break_14",
   "amended_from"
  ],
@@ -200,19 +199,15 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "remarks_section",
-   "fieldtype": "Section Break",
-   "label": "Remarks"
-  },
-  {
-   "fieldname": "remarks",
-   "fieldtype": "Long Text",
-   "label": "Remarks"
+   "default": "0",
+   "fieldname": "is_shortage",
+   "fieldtype": "Check",
+   "label": "Is Shortage"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-16 15:29:22.358032",
+ "modified": "2024-10-24 18:26:43.293204",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "POS Closing Shift",

@@ -267,14 +267,22 @@ def make_closing_shift_from_opening(opening_shift):
     closing_shift.set("pos_payments", pos_payments_table)
 
     return closing_shift
-
+from frappe.utils import flt
 
 @frappe.whitelist()
 def submit_closing_shift(closing_shift):
     closing_shift = json.loads(closing_shift)
     closing_shift_doc = frappe.get_doc(closing_shift)
+    for row in closing_shift_doc.payment_reconciliation:
+        cleaned_difference = str(row.difference).replace(',', '')
+        print("row.difference",float(cleaned_difference))
+        if  float(cleaned_difference)< 0:
+            print("in minus")
+            closing_shift_doc.is_shortage = 1
+    print("closing_shift_doc.is_shortage", closing_shift_doc.is_shortage)
     closing_shift_doc.flags.ignore_permissions = True
     closing_shift_doc.save()
+    
     closing_shift_doc.submit()
     return closing_shift_doc.name
 
