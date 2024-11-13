@@ -48,13 +48,19 @@ class POSClosingShift(Document):
         precision = (
             frappe.get_cached_value("System Settings", None, "currency_precision") or 3
         )
+        total_difference = 0
         for d in self.payment_reconciliation:
             d.difference = +flt(d.closing_amount, precision) - flt(
                 d.expected_amount, precision
             )
-            d.total_saleas = +flt(d.closing_amount, precision) - flt(
+            total_difference += d.difference
+
+            d.total_sales = +flt(d.closing_amount, precision) - flt(
                 d.opening_amount, precision
             )
+
+        if total_difference < 0:
+            self.is_shortage = 1
 
     def on_submit(self):
         opening_entry = frappe.get_doc("POS Opening Shift", self.pos_opening_shift)
@@ -267,22 +273,25 @@ def make_closing_shift_from_opening(opening_shift):
     closing_shift.set("pos_payments", pos_payments_table)
 
     return closing_shift
+
+
 from frappe.utils import flt
+
 
 @frappe.whitelist()
 def submit_closing_shift(closing_shift):
     closing_shift = json.loads(closing_shift)
     closing_shift_doc = frappe.get_doc(closing_shift)
+    
+    # ? CAL IS_SHORTAGE OR IS_OVERAGE
+    total_difference = 0
     for row in closing_shift_doc.payment_reconciliation:
-        cleaned_difference = str(row.difference).replace(',', '')
-        print("row.difference",float(cleaned_difference))
-        if  float(cleaned_difference)< 0:
-            print("in minus")
-            closing_shift_doc.is_shortage = 1
-    print("closing_shift_doc.is_shortage", closing_shift_doc.is_shortage)
+        total_difference += row.difference
+    if total_difference < 0:
+        closing_shift_doc.is_shortage = 1
+
     closing_shift_doc.flags.ignore_permissions = True
     closing_shift_doc.save()
-    
     closing_shift_doc.submit()
     return closing_shift_doc.name
 
