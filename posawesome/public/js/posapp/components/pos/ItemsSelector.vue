@@ -458,10 +458,12 @@ export default {
               const updated_item = r.message.find(
                 (element) => element.item_code == item.item_code
               );
+              console.log("object,",updated_item.actual_qty);
               item.actual_qty = updated_item.actual_qty;
               item.serial_no_data = updated_item.serial_no_data;
               item.batch_no_data = updated_item.batch_no_data;
               item.item_uoms = updated_item.item_uoms;
+              console.log("item", item.actual_qty);
             });
           }
         },

@@ -83,7 +83,8 @@ frappe.ui.form.on('POS Closing Shift Detail', {
 	closing_amount: (frm, cdt, cdn) => {
 		const row = locals[cdt][cdn];
 		frappe.model.set_value(cdt, cdn, "difference", flt(row.closing_amount - row.expected_amount));
-		frappe.model.set_value(cdt, cdn, "total_sales", flt(row.closing_amount - row.opening_amount));
+		frappe.model.set_value(cdt, cdn, "total_sales", flt(row.expected_amount - row.opening_amount));
+		frappe.model.set_value(cdt, cdn, "shift_status", row.difference < 0 ? "Shortage" : row.difference > 0 ? "Overage" : ""  );
 
 	}
 });
