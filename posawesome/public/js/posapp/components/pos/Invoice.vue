@@ -851,7 +851,7 @@ export default {
       items: [],
       posOffers: [],
       posa_offers: [],
-      posa_coupons: [],
+      posa_coupons: [], 
       allItems: [],
       discount_percentage_offer_name: null,
       invoiceTypes: ["Invoice", "Order"],
@@ -902,6 +902,18 @@ export default {
       this.items.forEach((item) => {
         sum += flt(item.qty) * flt(item.rate);
       });
+      return this.flt(sum, this.currency_precision);
+    },
+    discount_total() {
+      let sum = 0;
+      this.items.forEach((item) => {
+        console.log("finally", item.custom_discount_allowed)
+        if(item.custom_discount_allowed){
+          sum += flt(item.qty) * flt(item.rate);
+        }
+      });
+      console.log("sum", sum)
+     
       return this.flt(sum, this.currency_precision);
     },
     subtotal() {
@@ -2736,7 +2748,7 @@ export default {
         offer.discount_percentage <= 100
       ) {
         this.discount_amount = this.flt(
-          (flt(this.Total) * flt(offer.discount_percentage)) / 100,
+          (flt(this.discount_total) * flt(offer.discount_percentage)) / 100,
           this.currency_precision
         );
         this.discount_percentage_offer_name = offer.name;
