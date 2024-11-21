@@ -907,12 +907,10 @@ export default {
     discount_total() {
       let sum = 0;
       this.items.forEach((item) => {
-        console.log("finally", item.custom_discount_allowed)
         if(item.custom_discount_allowed){
           sum += flt(item.qty) * flt(item.rate);
         }
       });
-      console.log("sum", sum)
      
       return this.flt(sum, this.currency_precision);
     },

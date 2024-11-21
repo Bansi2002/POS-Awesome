@@ -84,6 +84,7 @@ export default {
     loading: false,
     pos_profile: '',
     customer: '',
+    expanded: [],
     posa_coupons: [],
     new_coupon: null,
     itemsPerPage: 1000,

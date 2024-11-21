@@ -594,7 +594,7 @@
               auto-select-first
               outlined
               color="primary"
-              :label="frappe._('Sales Person')"
+              :label="`${frappe._('Sales Person')} *`"
               v-model="sales_person"
               :items="sales_persons"
               item-text="sales_person_name"
@@ -604,6 +604,7 @@
               hide-details
               :filter="salesPersonFilter"
               :disabled="readonly"
+              :rules="[value => !!value || __('Sales Person is required')]"
             >
               <template v-slot:item="data">
                 <template>
@@ -627,18 +628,7 @@
 
     <v-card flat class="cards mb-0 mt-3 py-0">
       <v-row align="start" no-gutters>
-        <v-col cols="6">
-          <v-btn
-            block
-            large
-            color="primary"
-            dark
-            @click="submit"
-            :disabled="vaildatPayment"
-            >{{ __("Submit") }}</v-btn
-          >
-        </v-col>
-        <v-col cols="6" class="pl-1">
+        <v-col cols="12">
           <v-btn
             block
             large
@@ -744,6 +734,16 @@ export default {
         frappe.utils.play_sound("error");
         return;
       }
+      // Validate sales_person field
+      if (!this.sales_person) {
+        evntBus.$emit("show_mesage", {
+          text: __("Sales Person is required"),
+          color: "error",
+        });
+        frappe.utils.play_sound("error");
+        return;
+      }
+
       // validate phone payment
       let phone_payment_is_valid = true;
       if (!payment_received) {

@@ -498,6 +498,7 @@ def update_invoice(data):
     data = json.loads(data)
     if data.get("name"):
         invoice_doc = frappe.get_doc("Sales Invoice", data.get("name"))
+        invoice_doc.reload()
         invoice_doc.update(data)
     else:
         invoice_doc = frappe.get_doc(data)
@@ -1811,9 +1812,51 @@ def delete_sales_invoice(sales_invoice):
 
 
 @frappe.whitelist()
-def get_sales_invoice_child_table(sales_invoice, sales_invoice_item):
+def get_sales_invoice_child_table(sales_invoice, sales_invoice_item=None):
+
     parent_doc = frappe.get_doc("Sales Invoice", sales_invoice)
-    child_doc = frappe.get_doc(
-        "Sales Invoice Item", {"parent": parent_doc.name, "name": sales_invoice_item}
+    
+    if sales_invoice_item:
+
+        child_doc = frappe.get_doc(
+            "Sales Invoice Item", {"parent": parent_doc.name, "name": sales_invoice_item}
+        )
+        return child_doc
+    
+    child_docs = frappe.get_all(
+        "Sales Invoice Item", 
+        filters={"parent": parent_doc.name}, 
+        fields=["name", "item_name", "qty", "rate", "amount", "item_code","uom"]
     )
-    return child_doc
+    return child_docs
+
+
+import requests
+
+
+@frappe.whitelist(allow_guest=False)
+def validate_password(password):
+
+    user = frappe.session.user
+
+    try:
+
+        login_url = "http://192.168.2.132:8000/api/method/login"
+
+        response = requests.get(login_url, params={"usr": user, "pwd": password})
+        
+        if response.status_code == 200:
+            response_data = response.json()
+            if response_data.get("message") == "Logged In":
+                return {"message": "Logged In"}
+            else:
+                return {"message": "Invalid password"}
+        else:
+            return {"message": "Error calling login API"}
+    
+    except requests.exceptions.RequestException as e:
+        return {"message": f"An error occurred: {str(e)}"}
+    except Exception as e:
+        return {"message": f"An unexpected error occurred: {str(e)}"}
+
+
