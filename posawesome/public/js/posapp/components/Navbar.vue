@@ -1,22 +1,10 @@
 <template>
   <nav>
     <v-app-bar app height="40" class="elevation-2">
-      <v-app-bar-nav-icon
-        @click.stop="drawer = !drawer"
-        class="grey--text"
-      ></v-app-bar-nav-icon>
-      <v-img
-        src="/assets/posawesome/js/posapp/components/pos/pos.png"
-        alt="POS Awesome"
-        max-width="32"
-        class="mr-2"
-        color="primary"
-      ></v-img>
-      <v-toolbar-title
-        @click="go_desk"
-        style="cursor: pointer"
-        class="text-uppercase primary--text"
-      >
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="grey--text"></v-app-bar-nav-icon>
+      <v-img src="/assets/posawesome/js/posapp/components/pos/pos.png" alt="POS Awesome" max-width="32" class="mr-2"
+        color="primary"></v-img>
+      <v-toolbar-title @click="go_desk" style="cursor: pointer" class="text-uppercase primary--text">
         <span class="font-weight-light">pos</span>
         <span>awesome</span>
       </v-toolbar-title>
@@ -28,40 +16,31 @@
       <div class="text-center">
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark text v-bind="attrs" v-on="on"
-              >Menu</v-btn
-            >
+            <v-btn color="primary" dark text v-bind="attrs" v-on="on">Menu</v-btn>
           </template>
           <v-card class="mx-auto" max-width="300" tile>
             <v-list dense>
               <v-list-item-group v-model="menu_item" color="primary">
-                <v-list-item
-                  @click="close_shift_dialog"
-                  v-if="!pos_profile.posa_hide_closing_shift && item == 0"
-                >
+                <v-list-item @click="openCloseShiftDialog" v-if="!pos_profile.posa_hide_closing_shift && item == 0">
                   <v-list-item-icon>
                     <v-icon>mdi-content-save-move-outline</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title>{{
-                      __('Close Shift')
-                    }}</v-list-item-title>
+                    <v-list-item-title>{{ __('Close Shift') }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-                <v-list-item
-                  @click="print_last_invoice"
-                  v-if="
-                    pos_profile.posa_allow_print_last_invoice &&
-                    this.last_invoice
-                  "
-                >
+
+                <v-list-item @click="print_last_invoice" v-if="
+                  pos_profile.posa_allow_print_last_invoice &&
+                  this.last_invoice
+                ">
                   <v-list-item-icon>
                     <v-icon>mdi-printer</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>{{
                       __('Print Last Invoice')
-                    }}</v-list-item-title>
+                      }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-divider class="my-0"></v-divider>
@@ -87,13 +66,7 @@
         </v-menu>
       </div>
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant.sync="mini"
-      app
-      class="primary margen-top"
-      width="170"
-    >
+    <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" app class="primary margen-top" width="170">
       <v-list dark>
         <v-list-item class="px-2">
           <v-list-item-avatar>
@@ -108,11 +81,7 @@
         </v-list-item>
         <!-- <MyPopup/> -->
         <v-list-item-group v-model="item" color="white">
-          <v-list-item
-            v-for="item in items"
-            :key="item.text"
-            @click="changePage(item.text)"
-          >
+          <v-list-item v-for="item in items" :key="item.text" @click="changePage(item.text)">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -134,6 +103,29 @@
         <v-card-text>{{ freezeMsg }}</v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="closeShiftDialog" max-width="400">
+      <v-card>
+        <v-card-title>
+          <span class="headline primary--text">{{
+            __('Enter Password')
+          }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-text-field v-model="supervisorPassword" label="Password" type="password" outlined
+            :rules="[value => !!value || 'Password is required']"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" dark @click="close_dialog">{{
+            __('Close')
+          }}</v-btn>
+          <v-btn color="success" dark @click="submit_dialog">{{
+            __('Submit')
+          }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </nav>
 </template>
 
@@ -164,6 +156,8 @@ export default {
       freezeTitle: '',
       freezeMsg: '',
       last_invoice: '',
+      supervisorPassword: '',
+      closeShiftDialog: false,
     };
   },
   methods: {
@@ -227,6 +221,50 @@ export default {
         true
       );
     },
+    openCloseShiftDialog() {
+      this.closeShiftDialog = true;
+    },
+    close_dialog() {
+      this.closeShiftDialog = false;
+    },
+    submit_dialog() {
+      if (!this.supervisorPassword) {
+        this.show_mesage({
+          color: "red",
+          text: "Password is required!",
+        });
+        return;
+      }
+
+      frappe.call({
+        method: "posawesome.posawesome.api.posapp.validate_password",
+        args: {
+          password: this.supervisorPassword
+        },
+        callback: (response) => {
+          console.log(response)
+          if (response.message.message === "Logged In") {
+
+            this.closeShiftDialog = false;
+            evntBus.$emit('open_closing_dialog');
+          } else {
+
+            this.show_mesage({
+              color: "red",
+              text: "Incorrect password!",
+            });
+          }
+        },
+        error: (err) => {
+          this.show_mesage({
+            color: "red",
+            text: "An error occurred while validating the password.",
+          });
+          console.error("Error in validate_password:", err);
+        },
+      });
+    }
+
   },
   created: function () {
     this.$nextTick(function () {
