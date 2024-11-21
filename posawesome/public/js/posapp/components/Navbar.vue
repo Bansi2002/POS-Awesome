@@ -245,11 +245,12 @@ export default {
         });
         return;
       }
-
+      const baseUrl = window.location.origin;
       frappe.call({
         method: "posawesome.posawesome.api.posapp.validate_password",
         args: {
-          password: this.supervisorPassword
+          password: this.supervisorPassword,
+          baseUrl :baseUrl
         },
         callback: (response) => {
           console.log(response)
