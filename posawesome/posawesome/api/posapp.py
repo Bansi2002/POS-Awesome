@@ -498,11 +498,11 @@ def update_invoice(data):
     data = json.loads(data)
     if data.get("name"):
         invoice_doc = frappe.get_doc("Sales Invoice", data.get("name"))
-        invoice_doc.reload()
         invoice_doc.update(data)
+        invoice_doc.reload()
     else:
         invoice_doc = frappe.get_doc(data)
-
+    
     invoice_doc.set_missing_values()
     invoice_doc.flags.ignore_permissions = True
     frappe.flags.ignore_account_permission = True
