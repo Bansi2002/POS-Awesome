@@ -40,7 +40,7 @@
                   <v-list-item-content>
                     <v-list-item-title>{{
                       __('Print Last Invoice')
-                      }}</v-list-item-title>
+                    }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-divider class="my-0"></v-divider>
@@ -108,20 +108,26 @@
         <v-card-title>
           <span class="headline primary--text">{{
             __('Enter Password')
-          }}</span>
+            }}</span>
         </v-card-title>
         <v-card-text>
-          <v-text-field v-model="supervisorPassword" label="Password" type="password" outlined
-            :rules="[value => !!value || 'Password is required']"></v-text-field>
+          <v-text-field v-model="supervisorPassword" label="Password" :type="showPassword ? 'text' : 'password'"
+            outlined>
+            <template v-slot:append>
+              <v-icon @click="togglePasswordVisibility" class="cursor-pointer">
+                {{ showPassword ? 'mdi-eye-off' : 'mdi-eye' }}
+              </v-icon>
+            </template>
+          </v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="error" dark @click="close_dialog">{{
             __('Close')
-          }}</v-btn>
+            }}</v-btn>
           <v-btn color="success" dark @click="submit_dialog">{{
             __('Submit')
-          }}</v-btn>
+            }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -157,10 +163,14 @@ export default {
       freezeMsg: '',
       last_invoice: '',
       supervisorPassword: '',
+      showPassword: false,
       closeShiftDialog: false,
     };
   },
   methods: {
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
     changePage(key) {
       this.$emit('changePage', key);
     },
