@@ -1835,13 +1835,13 @@ import requests
 
 
 @frappe.whitelist(allow_guest=False)
-def validate_password(password):
+def validate_password(password, baseUrl):
 
     user = frappe.session.user
 
     try:
 
-        login_url = "http://192.168.2.132:8000/api/method/login"
+        login_url = f"{baseUrl}/api/method/login"
 
         response = requests.get(login_url, params={"usr": user, "pwd": password})
         
