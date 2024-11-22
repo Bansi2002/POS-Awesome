@@ -235,6 +235,7 @@ export default {
       this.closeShiftDialog = true;
     },
     close_dialog() {
+      this.supervisorPassword = '';
       this.closeShiftDialog = false;
     },
     submit_dialog() {
@@ -255,7 +256,7 @@ export default {
         callback: (response) => {
           console.log(response)
           if (response.message.message === "Logged In") {
-
+            this.supervisorPassword = '';
             this.closeShiftDialog = false;
             evntBus.$emit('open_closing_dialog');
           } else {
@@ -275,7 +276,6 @@ export default {
         },
       });
     }
-
   },
   created: function () {
     this.$nextTick(function () {
