@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-27 18:03:45.115917",
+ "default_view": "List",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "starting_number",
+  "barcode_number_limit"
+ ],
+ "fields": [
+  {
+   "fieldname": "starting_number",
+   "fieldtype": "Int",
+   "label": "Starting Number"
+  },
+  {
+   "fieldname": "barcode_number_limit",
+   "fieldtype": "Int",
+   "label": "Barcode Number Limit"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-11-27 18:03:45.115917",
+ "modified_by": "Administrator",
+ "module": "POSAwesome",
+ "name": "Barcode Parameters",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
