@@ -500,10 +500,11 @@ def update_invoice(data):
         invoice_doc = frappe.get_doc("Sales Invoice", data.get("name"))
         invoice_doc.update(data)
         invoice_doc.reload()
+        
     else:
         invoice_doc = frappe.get_doc(data)
     
-    invoice_doc.set_missing_values()
+    invoice_doc.set_missing_values()    
     invoice_doc.flags.ignore_permissions = True
     frappe.flags.ignore_account_permission = True
 
@@ -1833,30 +1834,58 @@ def get_sales_invoice_child_table(sales_invoice, sales_invoice_item=None):
 
 import requests
 
-
 @frappe.whitelist(allow_guest=False)
-def validate_password(password, baseUrl):
-
-    user = frappe.session.user
-
-    try:
-
-        login_url = f"{baseUrl}/api/method/login"
-
-        response = requests.get(login_url, params={"usr": user, "pwd": password})
-        
-        if response.status_code == 200:
-            response_data = response.json()
-            if response_data.get("message") == "Logged In":
-                return {"message": "Logged In"}
-            else:
-                return {"message": "Invalid password"}
-        else:
-            return {"message": "Error calling login API"}
+def validate_password(pos_profile, password, baseUrl):
     
-    except requests.exceptions.RequestException as e:
-        return {"message": f"An error occurred: {str(e)}"}
+    # VALIDATES THE GIVEN PASSWORD FOR ANY USER ASSOCIATED WITH THE SPECIFIED POS PROFILE
+    
+    try:
+        login_url = f"{baseUrl}/api/method/login"
+        
+        pos_profile_doc = frappe.get_doc("POS Profile", pos_profile)
+        
+        superior_users = pos_profile_doc.get("custom_superior_users")
+
+        print("Super", superior_users)
+
+        if superior_users:
+            for user_obj in superior_users:
+
+                user_name = user_obj.user 
+                
+                if not user_name:
+                    print(f"User not found for {user_obj}. Skipping...")
+                    continue
+                
+                try:
+                    response = requests.get(login_url, params={"usr": user_name, "pwd": password})
+                    
+                    if response.status_code == 200:
+                        response_data = response.json()
+
+                        if response_data.get("message") == "Logged In":
+                            print(f"User {user_name} successfully logged in")
+                            return {"message": "Logged In"}
+                    
+                except requests.exceptions.RequestException as e:
+                    print(f"Request failed for user {user_name}: {str(e)}")
+                
+                except frappe.AuthenticationError as e:
+                    print(f"Authentication failed for user {user_name}: {str(e)}")
+            
+            print("Password is invalid for all superior users.")
+            return {"message": "Invalid password"}
+        
+        else:
+
+            return {"message": "Please Add Superior User in POS Profile"}
+    
     except Exception as e:
         return {"message": f"An unexpected error occurred: {str(e)}"}
+
+
+   
+
+
 
 

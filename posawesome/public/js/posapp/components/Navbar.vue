@@ -40,7 +40,7 @@
                   <v-list-item-content>
                     <v-list-item-title>{{
                       __('Print Last Invoice')
-                    }}</v-list-item-title>
+                      }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-divider class="my-0"></v-divider>
@@ -108,7 +108,7 @@
         <v-card-title>
           <span class="headline primary--text">{{
             __('Enter Password')
-            }}</span>
+          }}</span>
         </v-card-title>
         <v-card-text>
           <v-text-field v-model="supervisorPassword" label="Password" :type="showPassword ? 'text' : 'password'"
@@ -124,10 +124,10 @@
           <v-spacer></v-spacer>
           <v-btn color="error" dark @click="close_dialog">{{
             __('Close')
-            }}</v-btn>
+          }}</v-btn>
           <v-btn color="success" dark @click="submit_dialog">{{
             __('Submit')
-            }}</v-btn>
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -250,8 +250,9 @@ export default {
       frappe.call({
         method: "posawesome.posawesome.api.posapp.validate_password",
         args: {
+          pos_profile: this.pos_profile.name,
           password: this.supervisorPassword,
-          baseUrl :baseUrl
+          baseUrl: baseUrl
         },
         callback: (response) => {
           console.log(response)
@@ -259,7 +260,14 @@ export default {
             this.supervisorPassword = '';
             this.closeShiftDialog = false;
             evntBus.$emit('open_closing_dialog');
-          } else {
+          }
+          else if(response.message.message === "Please Add Superior User in POS Profile") {
+            this.show_mesage({
+              color: "red",
+              text: "Please Add Superior User in POS Profile",
+            });
+          } 
+          else {
 
             this.show_mesage({
               color: "red",
