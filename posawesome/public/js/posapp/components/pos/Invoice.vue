@@ -167,7 +167,7 @@
             hide-default-footer
           >
             <template v-slot:item.qty="{ item }">{{
-              formtFloat(item.qty)
+              item.qty
             }}</template>
             <template v-slot:item.rate="{ item }"
               >{{ currencySymbol(pos_profile.currency) }}
@@ -245,7 +245,7 @@
                       :label="frappe._('QTY')"
                       background-color="white"
                       hide-details
-                      :value="formtFloat(item.qty)"
+                      :value="item.qty"
                       @change="
                         [
                           setFormatedFloat(item, 'qty', null, false, $event),
@@ -403,7 +403,7 @@
                       :label="frappe._('Available QTY')"
                       background-color="white"
                       hide-details
-                      :value="formtFloat(item.actual_qty)"
+                      :value="item.actual_qty"
                       disabled
                     ></v-text-field>
                   </v-col>
@@ -638,7 +638,7 @@
           <v-row no-gutters class="pa-1 pt-9 pr-1">
             <v-col cols="6" class="pa-1">
               <v-text-field
-                :value="formtFloat(total_qty)"
+                :value="total_qty"
                 :label="frappe._('Total Qty')"
                 outlined
                 dense
@@ -1267,6 +1267,7 @@ export default {
       doc.posa_delivery_charges = this.selcted_delivery_charges.name;
       doc.posa_delivery_charges_rate = this.delivery_charges_rate || 0;
       doc.posting_date = this.posting_date;
+      doc.group_same_items = true;
       return doc;
     },
 
@@ -1484,6 +1485,7 @@ export default {
         const invoice_doc = await this.process_invoice_from_order();
         evntBus.$emit("send_invoice_doc_payment", invoice_doc);
       } else if (this.invoice_doc.doctype == "Sales Invoice") {
+
         const sales_invoice_item = this.invoice_doc.items[0];
         var sales_invoice_item_doc = {};
         frappe.call({

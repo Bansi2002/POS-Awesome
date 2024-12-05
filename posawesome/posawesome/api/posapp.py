@@ -1803,6 +1803,7 @@ def get_seearch_items_conditions(item_code, serial_no, batch_no, barcode):
 @frappe.whitelist()
 def create_sales_invoice_from_order(sales_order):
     sales_invoice = make_sales_invoice(sales_order, ignore_permissions=True)
+    sales_invoice.group_same_items = 1
     sales_invoice.save()
     return sales_invoice
 

@@ -34,7 +34,7 @@
                       {{ formtCurrency(item.rate) || 0 }}
                     </div>
                     <div class="text-caption golden--text">
-                      {{ formtFloat(item.actual_qty) || 0 }}
+                      {{ item.actual_qty || 0 }}
                       {{ item.stock_uom || "" }}
                     </div>
                   </v-card-text>
@@ -53,7 +53,7 @@
                   </template>
                   <template v-slot:item.actual_qty="{ item }">
                     <span class="golden--text">{{
-                      formtFloat(item.actual_qty)
+                      item.actual_qty || 0
                       }}</span>
                   </template>
                 </v-data-table>
