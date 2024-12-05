@@ -558,7 +558,7 @@
               <div class="pa-2 py-3">{{ row.credit_origin }}</div>
             </v-col>
             <v-col cols="4">
-              <v-text-field
+              <v-text-field 
                 dense
                 outlined
                 color="primary"
@@ -570,8 +570,16 @@
                 :prefix="currencySymbol(invoice_doc.currency)"
               ></v-text-field>
             </v-col>
-            <v-col cols="4">
-              <v-text-field
+            <v-col cols="4" v-if="
+            invoice_doc &&
+            available_customer_credit > 0 &&
+            !invoice_doc.is_return &&
+            redeem_customer_credit
+          ">
+              <v-text-field  v-if="
+            
+            !invoice_doc.is_return 
+          "
                 dense
                 outlined
                 color="primary"
@@ -1137,6 +1145,7 @@ export default {
           },
         })
         .then(() => {
+          if(!this.invoice_doc.is_return && !this.invoice_doc.redeemed_customer_credit){
           frappe
             .call({
               method: "posawesome.posawesome.api.posapp.create_payment_request",
@@ -1190,6 +1199,15 @@ export default {
                   });
               }, 30000);
             });
+          }
+          else{
+            frappe.db
+                        .get_doc("Sales Invoice", vm.invoice_doc.name)
+                        .then((doc) => {
+                          vm.invoice_doc = doc;
+                          vm.submit(null, true);
+                        });
+          }
         });
     },
     get_mpesa_modes() {
@@ -1294,6 +1312,7 @@ export default {
       this.customer_credit_dict.map((row) => {
         total += row.total_credit;
       });
+
       return total;
     },
     redeemed_customer_credit() {
@@ -1339,6 +1358,7 @@ export default {
 
   mounted: function () {
     this.$nextTick(function () {
+      if(!this.invoice_doc.is_return && !this.invoice_doc.redeemed_customer_credit){
       evntBus.$on("send_invoice_doc_payment", (invoice_doc) => {
         this.invoice_doc = invoice_doc;
         const default_payment = this.invoice_doc.payments.find(
@@ -1363,6 +1383,7 @@ export default {
         this.get_addresses();
         this.get_sales_person_names();
       });
+      }
       evntBus.$on("register_pos_profile", (data) => {
         this.pos_profile = data.pos_profile;
         this.get_mpesa_modes();
