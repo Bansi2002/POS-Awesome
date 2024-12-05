@@ -534,7 +534,7 @@
           </v-col>
           <v-col
             cols="6"
-            v-if="!invoice_doc.is_return && pos_profile.use_customer_credit"
+            v-if=" pos_profile.use_customer_credit"
           >
             <v-switch
               v-model="redeem_customer_credit"
@@ -1294,7 +1294,6 @@ export default {
       this.customer_credit_dict.map((row) => {
         total += row.total_credit;
       });
-
       return total;
     },
     redeemed_customer_credit() {

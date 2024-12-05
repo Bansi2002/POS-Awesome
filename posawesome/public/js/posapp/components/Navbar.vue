@@ -220,7 +220,7 @@ export default {
         '&trigger_print=1' +
         '&format=' +
         print_format +
-        '&no_letterhead=' +
+        '&no_letterhead=' + 
         letter_head;
       const printWindow = window.open(url, 'Print');
       printWindow.addEventListener(
