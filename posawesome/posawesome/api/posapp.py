@@ -500,11 +500,11 @@ def update_invoice(data):
         invoice_doc = frappe.get_doc("Sales Invoice", data.get("name"))
         invoice_doc.update(data)
         invoice_doc.reload()
-        
+
     else:
         invoice_doc = frappe.get_doc(data)
-    
-    invoice_doc.set_missing_values()    
+
+    invoice_doc.set_missing_values()
     invoice_doc.flags.ignore_permissions = True
     frappe.flags.ignore_account_permission = True
 
@@ -830,6 +830,27 @@ def get_available_credit(customer, company):
     )
 
     for row in outstanding_invoices:
+        outstanding_amount = -(row.outstanding_amount)
+        row = {
+            "type": "Invoice",
+            "credit_origin": row.name,
+            "total_credit": outstanding_amount,
+            "credit_to_redeem": 0,
+        }
+
+        total_credit.append(row)
+    return_invoices = frappe.get_all(
+        "Sales Invoice",
+        {
+            "docstatus": 1,
+            "is_return": 1,
+            "custom_add_customer_credit": 1,
+            "customer": customer,
+            "company": company,
+        },
+        ["name", "outstanding_amount"],
+    )
+    for row in return_invoices:
         outstanding_amount = -(row.outstanding_amount)
         row = {
             "type": "Invoice",
@@ -1318,7 +1339,6 @@ def get_offers(profile):
         as_dict=1,
     )
     return data
-
 
 
 @frappe.whitelist()
@@ -1817,34 +1837,36 @@ def delete_sales_invoice(sales_invoice):
 def get_sales_invoice_child_table(sales_invoice, sales_invoice_item=None):
 
     parent_doc = frappe.get_doc("Sales Invoice", sales_invoice)
-    
+
     if sales_invoice_item:
 
         child_doc = frappe.get_doc(
-            "Sales Invoice Item", {"parent": parent_doc.name, "name": sales_invoice_item}
+            "Sales Invoice Item",
+            {"parent": parent_doc.name, "name": sales_invoice_item},
         )
         return child_doc
-    
+
     child_docs = frappe.get_all(
-        "Sales Invoice Item", 
-        filters={"parent": parent_doc.name}, 
-        fields=["name", "item_name", "qty", "rate", "amount", "item_code","uom"]
+        "Sales Invoice Item",
+        filters={"parent": parent_doc.name},
+        fields=["name", "item_name", "qty", "rate", "amount", "item_code", "uom"],
     )
     return child_docs
 
 
 import requests
 
+
 @frappe.whitelist(allow_guest=False)
 def validate_password(pos_profile, password, baseUrl):
-    
+
     # VALIDATES THE GIVEN PASSWORD FOR ANY USER ASSOCIATED WITH THE SPECIFIED POS PROFILE
-    
+
     try:
         login_url = f"{baseUrl}/api/method/login"
-        
+
         pos_profile_doc = frappe.get_doc("POS Profile", pos_profile)
-        
+
         superior_users = pos_profile_doc.get("custom_superior_users")
 
         print("Super", superior_users)
@@ -1852,41 +1874,35 @@ def validate_password(pos_profile, password, baseUrl):
         if superior_users:
             for user_obj in superior_users:
 
-                user_name = user_obj.user 
-                
+                user_name = user_obj.user
+
                 if not user_name:
                     print(f"User not found for {user_obj}. Skipping...")
                     continue
-                
+
                 try:
-                    response = requests.get(login_url, params={"usr": user_name, "pwd": password})
-                    
+                    response = requests.get(
+                        login_url, params={"usr": user_name, "pwd": password}
+                    )
+
                     if response.status_code == 200:
                         response_data = response.json()
 
                         if response_data.get("message") == "Logged In":
-                            print(f"User {user_name} successfully logged in")
                             return {"message": "Logged In"}
-                    
+
                 except requests.exceptions.RequestException as e:
                     print(f"Request failed for user {user_name}: {str(e)}")
-                
+
                 except frappe.AuthenticationError as e:
                     print(f"Authentication failed for user {user_name}: {str(e)}")
-            
+
             print("Password is invalid for all superior users.")
             return {"message": "Invalid password"}
-        
+
         else:
 
             return {"message": "Please Add Superior User in POS Profile"}
-    
+
     except Exception as e:
         return {"message": f"An unexpected error occurred: {str(e)}"}
-
-
-   
-
-
-
-
