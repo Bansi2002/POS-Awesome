@@ -168,13 +168,7 @@ const set_filters = (frm) => {
 			}
 		};
 	});
-	// frm.set_query('item_group', function () {
-	// 	return {
-	// 		filters: {
-	// 			'is_group': 0,
-	// 		}
-	// 	};
-	// });
+
 	frm.set_query('apply_item_group', function () {
 		return {
 			filters: {
