@@ -397,32 +397,10 @@ import { evntBus } from "../../bus";
 import format from "../../format";
 import Customer from "./Customer.vue";
 
-console.log("init");
 
-// let item_groups = []
-
-// async function getItemGroups() {
-//   try {
-//     const response = await frappe.call({
-//       method: "frappe.client.get_list",
-//       args: { doctype: "Item Group", fields: ["name", "parent_item_group", "is_group"], page_length_limit: 0 }
-//     });
-
-//     if (response.message) {
-//       item_groups = response.message;
-//     }
-//   } catch (error) {
-//     console.error('Error fetching item groups:', error);
-//   }
-// }
-
-// // Call the async function
-// var item_group_list = getItemGroups();
-
-
-
+// define item_group_list
 let item_group_list=[];
-
+// get item group list
 async function getItemGroups() {
   try {
     const response = await frappe.call({
@@ -431,23 +409,21 @@ async function getItemGroups() {
     });
 
     if (response.message) {
-      console.log(response.message);
+  
       return response.message;  
     }
-  } catch (error) {
-    console.error('Error fetching item groups:', error);
-    return [];  
+  } 
+  catch (error) {
+    console.error("Error fetching item groups:", error);
   }
 }
 
-
+  // return data in the item_group_list
   let responseData = getItemGroups();  
   responseData.then(data => {
-    console.log("data",data);
+
     item_group_list = data
-  }).catch(error => {
-    console.error('Error in handling item groups:', error);
-  });
+  })
 
 
 export default {
@@ -1912,56 +1888,59 @@ export default {
 
     getGroupOffer(offer) {
       let apply_offer = null;
+
+      let parent_name = offer.item_group;
       
-      console.log(typeof(item_group_list));
-      console.log(item_group_list);
-      let parentName = offer.item_group;
 
-      // function findAllChildren(groups, parentName) {
-      //   // Find the direct children of the parent
-      //   let children = groups.filter(group => group.parent_item_group === parentName);
 
-      //   // For each child, find their children recursively
-      //   let allChildren = [...children]; // Start with direct children
+      
 
-      //   children.forEach(child => {
-      //     // Recursively get the children's children
-      //     let subChildren = findAllChildren(groups, child.name);
-      //     allChildren = [...allChildren, ...subChildren];
-      //   });
 
-      //   // Return only the names of the children
-      //   return allChildren.map(child => child.name);
-      // }
 
-      // const allDescendants = findAllChildren(item_group_list, parentName);
-      // console.log(allDescendants);
+      function get_all_child_node(groups, parent_name) {
+              let validGroups = groups.filter(group => group && (typeof group === 'object' ? group.name && group.parent_item_group : true));
+              let all_nodes = [];
+              let child_node = validGroups.filter(group => group.parent_item_group === parent_name);
+              let all_child_node = [...child_node];
 
-      function findAllChildren(groups, parentName) {
-  
+              child_node.forEach(child => {
+                  let sub_child_node = get_all_child_node(validGroups, child.name);
+                  all_child_node.push(...sub_child_node);
+              });
 
-          console.log("Groups data:", groups); 
+              all_nodes = all_nodes.concat(all_child_node);
 
-          // Find the direct children of the parent
-          let children = groups.filter(group => group.parent_item_group === parentName);
+              let nonObjectValues = groups.filter(group => typeof group !== 'object').map(item => item);
+              all_nodes = all_nodes.concat(nonObjectValues);
 
-          console.log("Direct children:", children); // Log the direct children for debugging
+              return all_nodes.map(child => {
+                  return {
+                      name: child.name,
+                      parent_item_group: child.parent_item_group,
+                      is_group: child.is_group,
+                      sub_children: get_all_child_node(validGroups, child.name)
+                  };
+              });
+          }
 
-          // For each child, find their children recursively
-          let allChildren = [...children]; // Start with direct children
-
-          children.forEach(child => {
-            // Recursively get the children's children
-            let subChildren = findAllChildren(groups, child.name);
-            allChildren = [...allChildren, ...subChildren];
-          });
-
-          // Return only the names of the children
-          return allChildren.map(child => child.name);
+          function get_group_name_list(data) {
+            let names = [];
+            data.forEach(item => {
+                names.push(item.name);
+                if (item.sub_children && item.sub_children.length > 0) {
+                    names = names.concat(get_group_name_list(item.sub_children));
+                }
+            });
+            return names;
         }
 
-        const allDescendants = findAllChildren(item_group_list, parentName);
-        console.log("All Descendants:", allDescendants);
+        const all_group_data = get_all_child_node(item_group_list, "Electronic");
+        const group_name_list = [...new Set(get_group_name_list(all_group_data))];  
+        
+
+
+
+
 
 
 
@@ -1971,12 +1950,14 @@ export default {
           let total_count = 0;
           let total_amount = 0;
           this.items.forEach((item) => {
-            if (!item.posa_is_offer && item.custom_discount_allowed && (item.item_group === offer.item_group || allDescendants.includes(item.item_group))) {
+            
+            if (!item.posa_is_offer && item.custom_discount_allowed && (item.item_group === offer.item_group || group_name_list.includes(item.item_group))) {
               if (
                 offer.offer === "Item Price" &&
                 item.posa_offer_applied &&
                 !this.checkOfferIsAppley(item, offer)
               ) {
+                console.log("Applied Offer==========================");
               } else {
                 total_count += item.stock_qty;
                 total_amount += item.stock_qty * item.price_list_rate;
