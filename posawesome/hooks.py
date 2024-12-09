@@ -39,6 +39,7 @@ doctype_js = {
     "Sales Invoice": "posawesome/api/invoice.js",
     "Company": "posawesome/api/company.js",
     "Item": "public/js/item.js",
+    "Customer Group": "public/js/customer_group.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -103,6 +104,11 @@ doc_events = {
     "Customer": {
         "validate": "posawesome.posawesome.api.customer.validate",
         "after_insert": "posawesome.posawesome.api.customer.after_insert",
+    },
+     "Customer Group": {
+        "before_save": "posawesome.posawesome.api.customer_group.on_update",
+        "on_update": "posawesome.posawesome.api.customer_group.on_update",
+        
     },
 }
 

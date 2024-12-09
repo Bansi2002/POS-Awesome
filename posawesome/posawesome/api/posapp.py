@@ -1906,3 +1906,4 @@ def validate_password(pos_profile, password, baseUrl):
 
     except Exception as e:
         return {"message": f"An unexpected error occurred: {str(e)}"}
+
