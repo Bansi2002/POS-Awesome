@@ -1882,11 +1882,4 @@ def validate_password(pos_profile, password, baseUrl):
             return {"message": "Please Add Superior User in POS Profile"}
     
     except Exception as e:
-        return {"message": f"An unexpected error occurred: {str(e)}"}
-
-
-   
-
-
-
-
+        return {"message": f"An unexpected error occurred: {str(e)}"}  
