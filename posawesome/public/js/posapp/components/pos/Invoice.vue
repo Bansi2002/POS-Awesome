@@ -1889,14 +1889,8 @@ export default {
     getGroupOffer(offer) {
       let apply_offer = null;
 
-      let parent_name = offer.item_group;
       
-
-
-      
-
-
-
+      // Retrieve all child nodes if the group is a parent and the parent name is in the define in pos offer
       function get_all_child_node(groups, parent_name) {
               let validGroups = groups.filter(group => group && (typeof group === 'object' ? group.name && group.parent_item_group : true));
               let all_nodes = [];
@@ -1923,6 +1917,7 @@ export default {
               });
           }
 
+          // Create an array by merging all child groups provided in the POS offer group.
           function get_group_name_list(data) {
             let names = [];
             data.forEach(item => {
@@ -1934,30 +1929,25 @@ export default {
             return names;
         }
 
-        const all_group_data = get_all_child_node(item_group_list, "Electronic");
+        const all_group_data = get_all_child_node(item_group_list, offer.item_group);
+        // remove duplicate item group
         const group_name_list = [...new Set(get_group_name_list(all_group_data))];  
         
-
-
-
-
-
-
-
+      // check if apply offer on item item group
       if (offer.apply_on === "Item Group") {
         if (this.checkOfferCoupon(offer)) {
           const items = [];
           let total_count = 0;
           let total_amount = 0;
           this.items.forEach((item) => {
-            
+            // Match the item group with the offer item group and include the item group in the specified array.
             if (!item.posa_is_offer && item.custom_discount_allowed && (item.item_group === offer.item_group || group_name_list.includes(item.item_group))) {
               if (
                 offer.offer === "Item Price" &&
                 item.posa_offer_applied &&
                 !this.checkOfferIsAppley(item, offer)
               ) {
-                console.log("Applied Offer==========================");
+              
               } else {
                 total_count += item.stock_qty;
                 total_amount += item.stock_qty * item.price_list_rate;
