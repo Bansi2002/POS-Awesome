@@ -575,7 +575,8 @@ def submit_invoice(invoice, data):
                 "Company", invoice_doc.company, "default_cash_account"
             )
         }
-
+    if data.get("redeem_customer_credit"):
+        invoice_doc.custom_add_customer_credit = 1
     # creating advance payment
     if data.get("credit_change"):
         advance_payment_entry = frappe.get_doc(

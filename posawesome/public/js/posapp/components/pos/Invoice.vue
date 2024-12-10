@@ -221,7 +221,7 @@
                   </v-col>
                   <v-col cols="4">
                     <v-text-field dense outlined color="primary" :label="frappe._('Stock QTY')" background-color="white"
-                      hide-details :value="formtFloat(item.stock_qty)" disabled></v-text-field>
+                      hide-details :value="item.stock_qty" disabled></v-text-field>
                   </v-col>
                   <v-col cols="4">
                     <v-text-field dense outlined color="primary" :label="frappe._('Stock UOM')" background-color="white"
@@ -243,7 +243,7 @@
                   </v-col>
                   <v-col cols="4" v-if="item.has_batch_no == 1 || item.batch_no">
                     <v-text-field dense outlined color="primary" :label="frappe._('Batch No. Available QTY')"
-                      background-color="white" hide-details :value="formtFloat(item.actual_batch_qty)"
+                      background-color="white" hide-details :value="item.actual_batch_qty"
                       disabled></v-text-field>
                   </v-col>
                   <v-col cols="4" v-if="item.has_batch_no == 1 || item.batch_no">
