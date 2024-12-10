@@ -19,10 +19,18 @@ def generate_barcode():
     barcodes = frappe.db.sql("""
         SELECT barcode FROM `tabItem Barcode`
     """, as_dict=True)
-    barcodes = [barcode['barcode'] for barcode in barcodes]
+    # barcodes = [barcode['barcode'] for barcode in barcodes]
     
-    if(barcodes):
-        current_start_num = max(int(max(barcodes)), current_start_num)
+    numeric_barcodes = []
+    for barcode in barcodes:
+        if barcode['barcode'] and re.match(r'^\d+$', barcode['barcode']):
+            numeric_barcodes.append(int(barcode['barcode']))
+
+    # Determine the starting number for new barcodes
+    if numeric_barcodes:
+        current_start_num = max(max(numeric_barcodes), current_start_num)
+    # if(barcodes):
+    #     current_start_num = max(int(max(barcodes)), current_start_num)
 
     barcodes = [current_start_num+i+1 for i in range(limit)]
     

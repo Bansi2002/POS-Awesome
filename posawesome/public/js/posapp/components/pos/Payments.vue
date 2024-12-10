@@ -886,7 +886,8 @@ export default {
       data["redeemed_customer_credit"] = this.redeemed_customer_credit;
       data["customer_credit_dict"] = this.customer_credit_dict;
       data["is_cashback"] = this.is_cashback;
-
+      data["redeem_customer_credit"]= this.redeem_customer_credit
+      console.log("customer_credit", this.redeem_customer_credit)
       const vm = this;
       frappe.call({
         method: "posawesome.posawesome.api.posapp.submit_invoice",
