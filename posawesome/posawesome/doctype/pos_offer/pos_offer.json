@@ -117,12 +117,6 @@
    "options": "Item"
   },
   {
-   "fieldname": "item_group",
-   "fieldtype": "Link",
-   "label": "Apply Rule On Item Group",
-   "options": "Item Group"
-  },
-  {
    "fieldname": "brand",
    "fieldtype": "Link",
    "label": "Apply Rule On Brand",
@@ -305,11 +299,17 @@
    "fieldname": "coupon_based",
    "fieldtype": "Check",
    "label": "Coupon Code Based"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Table MultiSelect",
+   "label": "Apply Rule On Item Group",
+   "options": "Applicable Item Groups"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-24 10:45:31.578525",
+ "modified": "2024-12-11 11:17:24.031591",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "POS Offer",
