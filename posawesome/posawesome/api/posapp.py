@@ -1339,6 +1339,15 @@ def get_offers(profile):
         values=values,
         as_dict=1,
     )
+    for offer in data:
+        if offer.get("apply_on") == "Item Group":
+            # Fetch the associated item groups
+            offer["item_group"] = frappe.get_all(
+                "Applicable Item Groups",
+                filters={"parent": offer["name"]},
+                fields=["item_group"],
+                pluck="item_group"
+            )
     return data
 
 

@@ -1928,10 +1928,15 @@ export default {
             });
             return names;
         }
+        
+      const offer_item_group_list = Array.isArray(offer.item_group) ? offer.item_group : [offer.item_group];
+      let all_group_data = [];
+      offer_item_group_list.forEach(item_group => {
 
-        const all_group_data = get_all_child_node(item_group_list, offer.item_group);
-        // remove duplicate item group
-        const group_name_list = [...new Set(get_group_name_list(all_group_data))];  
+        all_group_data = all_group_data.concat(get_all_child_node(item_group_list, item_group));
+      });
+      // Remove duplicate item groups
+      const group_name_list = [...new Set(get_group_name_list(all_group_data))];
         
       // check if apply offer on item item group
       if (offer.apply_on === "Item Group") {
@@ -1941,7 +1946,7 @@ export default {
           let total_amount = 0;
           this.items.forEach((item) => {
             // Match the item group with the offer item group and include the item group in the specified array.
-            if (!item.posa_is_offer && item.custom_discount_allowed && (item.item_group === offer.item_group || group_name_list.includes(item.item_group))) {
+            if (!item.posa_is_offer && item.custom_discount_allowed && (item.item_group === offer.item_group || group_name_list.includes(item.item_group) || offer_item_group_list.includes(item.item_group))) {
               if (
                 offer.offer === "Item Price" &&
                 item.posa_offer_applied &&
