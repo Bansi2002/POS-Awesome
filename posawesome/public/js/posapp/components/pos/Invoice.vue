@@ -5,7 +5,7 @@
         <v-card-title class="text-h5">
           <span class="headline primary--text">{{
             __("Cancel Current Invoice ?")
-            }}</span>
+          }}</span>
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -76,7 +76,7 @@
             show-expand item-key="posa_row_id" class="elevation-1" :items-per-page="itemsPerPage" hide-default-footer>
             <template v-slot:item.qty="{ item }">{{
               item.qty
-              }}</template>
+            }}</template>
             <template v-slot:item.rate="{ item }">{{ currencySymbol(pos_profile.currency) }}
               {{ formtCurrency(item.rate) }}</template>
             <template v-slot:item.amount="{ item }">{{ currencySymbol(pos_profile.currency) }}
@@ -243,8 +243,7 @@
                   </v-col>
                   <v-col cols="4" v-if="item.has_batch_no == 1 || item.batch_no">
                     <v-text-field dense outlined color="primary" :label="frappe._('Batch No. Available QTY')"
-                      background-color="white" hide-details :value="item.actual_batch_qty"
-                      disabled></v-text-field>
+                      background-color="white" hide-details :value="item.actual_batch_qty" disabled></v-text-field>
                   </v-col>
                   <v-col cols="4" v-if="item.has_batch_no == 1 || item.batch_no">
                     <v-text-field dense outlined color="primary" :label="frappe._('Batch No Expiry Date')"
@@ -399,7 +398,7 @@ import Customer from "./Customer.vue";
 
 
 // define item_group_list
-let item_group_list=[];
+let item_group_list = [];
 // get item group list
 async function getItemGroups() {
   try {
@@ -409,21 +408,21 @@ async function getItemGroups() {
     });
 
     if (response.message) {
-  
-      return response.message;  
+
+      return response.message;
     }
-  } 
+  }
   catch (error) {
     console.error("Error fetching item groups:", error);
   }
 }
 
-  // return data in the item_group_list
-  let responseData = getItemGroups();  
-  responseData.then(data => {
+// return data in the item_group_list
+let responseData = getItemGroups();
+responseData.then(data => {
 
-    item_group_list = data
-  })
+  item_group_list = data
+})
 
 
 export default {
@@ -1889,46 +1888,46 @@ export default {
     getGroupOffer(offer) {
       let apply_offer = null;
 
-      
+
       // Retrieve all child nodes if the group is a parent and the parent name is in the define in pos offer
       function get_all_child_node(groups, parent_name) {
-              let validGroups = groups.filter(group => group && (typeof group === 'object' ? group.name && group.parent_item_group : true));
-              let all_nodes = [];
-              let child_node = validGroups.filter(group => group.parent_item_group === parent_name);
-              let all_child_node = [...child_node];
+        let validGroups = groups.filter(group => group && (typeof group === 'object' ? group.name && group.parent_item_group : true));
+        let all_nodes = [];
+        let child_node = validGroups.filter(group => group.parent_item_group === parent_name);
+        let all_child_node = [...child_node];
 
-              child_node.forEach(child => {
-                  let sub_child_node = get_all_child_node(validGroups, child.name);
-                  all_child_node.push(...sub_child_node);
-              });
+        child_node.forEach(child => {
+          let sub_child_node = get_all_child_node(validGroups, child.name);
+          all_child_node.push(...sub_child_node);
+        });
 
-              all_nodes = all_nodes.concat(all_child_node);
+        all_nodes = all_nodes.concat(all_child_node);
 
-              let nonObjectValues = groups.filter(group => typeof group !== 'object').map(item => item);
-              all_nodes = all_nodes.concat(nonObjectValues);
+        let nonObjectValues = groups.filter(group => typeof group !== 'object').map(item => item);
+        all_nodes = all_nodes.concat(nonObjectValues);
 
-              return all_nodes.map(child => {
-                  return {
-                      name: child.name,
-                      parent_item_group: child.parent_item_group,
-                      is_group: child.is_group,
-                      sub_children: get_all_child_node(validGroups, child.name)
-                  };
-              });
+        return all_nodes.map(child => {
+          return {
+            name: child.name,
+            parent_item_group: child.parent_item_group,
+            is_group: child.is_group,
+            sub_children: get_all_child_node(validGroups, child.name)
+          };
+        });
+      }
+
+      // Create an array by merging all child groups provided in the POS offer group.
+      function get_group_name_list(data) {
+        let names = [];
+        data.forEach(item => {
+          names.push(item.name);
+          if (item.sub_children && item.sub_children.length > 0) {
+            names = names.concat(get_group_name_list(item.sub_children));
           }
+        });
+        return names;
+      }
 
-          // Create an array by merging all child groups provided in the POS offer group.
-          function get_group_name_list(data) {
-            let names = [];
-            data.forEach(item => {
-                names.push(item.name);
-                if (item.sub_children && item.sub_children.length > 0) {
-                    names = names.concat(get_group_name_list(item.sub_children));
-                }
-            });
-            return names;
-        }
-        
       const offer_item_group_list = Array.isArray(offer.item_group) ? offer.item_group : [offer.item_group];
       let all_group_data = [];
       offer_item_group_list.forEach(item_group => {
@@ -1937,7 +1936,7 @@ export default {
       });
       // Remove duplicate item groups
       const group_name_list = [...new Set(get_group_name_list(all_group_data))];
-        
+
       // check if apply offer on item item group
       if (offer.apply_on === "Item Group") {
         if (this.checkOfferCoupon(offer)) {
@@ -1952,7 +1951,7 @@ export default {
                 item.posa_offer_applied &&
                 !this.checkOfferIsAppley(item, offer)
               ) {
-              
+
               } else {
                 total_count += item.stock_qty;
                 total_amount += item.stock_qty * item.price_list_rate;

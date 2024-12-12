@@ -214,6 +214,7 @@ export default {
     },
     handelOffers() {
       const applyedOffers = this.pos_offers.filter(
+  
         (offer) => offer.offer_applied
       );
       evntBus.$emit('update_invoice_offers', applyedOffers);
