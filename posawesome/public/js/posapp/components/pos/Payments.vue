@@ -887,7 +887,6 @@ export default {
       data["customer_credit_dict"] = this.customer_credit_dict;
       data["is_cashback"] = this.is_cashback;
       data["redeem_customer_credit"]= this.redeem_customer_credit
-      console.log("customer_credit", this.redeem_customer_credit)
       const vm = this;
       frappe.call({
         method: "posawesome.posawesome.api.posapp.submit_invoice",
@@ -898,9 +897,9 @@ export default {
         async: true,
         callback: function (r) {
           if (r.message) {
-            if (print) {
-              vm.load_print_page();
-            }
+             if (print) {
+               vm.load_print_page();
+             }
             evntBus.$emit("set_last_invoice", vm.invoice_doc.name);
             evntBus.$emit("show_mesage", {
               text: `Invoice ${r.message.name} is Submited`,

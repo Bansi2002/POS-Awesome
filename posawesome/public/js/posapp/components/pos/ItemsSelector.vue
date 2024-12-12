@@ -177,7 +177,6 @@ export default {
             vm.items = r.message;
             evntBus.$emit("set_all_items", vm.items);
             vm.loading = false;
-            console.info("Items Loaded");
             if (
               vm.pos_profile.posa_local_storage &&
               !vm.pos_profile.pose_use_limit_search
