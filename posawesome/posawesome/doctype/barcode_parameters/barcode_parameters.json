@@ -16,17 +16,15 @@
    "label": "Starting Number"
   },
   {
-   "default": "10",
    "fieldname": "barcode_number_limit",
    "fieldtype": "Int",
-   "label": "Barcode Number Limit",
-   "read_only": 1
+   "label": "Barcode Number Limit"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-12 14:05:46.909239",
+ "modified": "2024-12-12 17:09:05.976539",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "Barcode Parameters",
