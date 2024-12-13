@@ -11,3 +11,4 @@ frappe.ui.form.on('Barcode Parameters', {
         }
     }
 });
+    

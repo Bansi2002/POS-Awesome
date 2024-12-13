@@ -5,7 +5,7 @@
         <v-card-title class="text-h5">
           <span class="headline primary--text">{{
             __("Cancel Current Invoice ?")
-          }}</span>
+            }}</span>
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -76,7 +76,7 @@
             show-expand item-key="posa_row_id" class="elevation-1" :items-per-page="itemsPerPage" hide-default-footer>
             <template v-slot:item.qty="{ item }">{{
               item.qty
-            }}</template>
+              }}</template>
             <template v-slot:item.rate="{ item }">{{ currencySymbol(pos_profile.currency) }}
               {{ formtCurrency(item.rate) }}</template>
             <template v-slot:item.amount="{ item }">{{ currencySymbol(pos_profile.currency) }}

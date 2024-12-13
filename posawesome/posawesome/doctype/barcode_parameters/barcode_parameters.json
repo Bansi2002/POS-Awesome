@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "starting_number",
-  "barcode_number_limit"
+  "barcode_number_limit",
+  "last_barcode_generated"
  ],
  "fields": [
   {
@@ -19,12 +20,18 @@
    "fieldname": "barcode_number_limit",
    "fieldtype": "Int",
    "label": "Barcode Number Limit"
+  },
+  {
+   "fieldname": "last_barcode_generated",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Last Barcode Generated"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-12 17:09:05.976539",
+ "modified": "2024-12-13 17:11:12.891682",
  "modified_by": "Administrator",
  "module": "POSAwesome",
  "name": "Barcode Parameters",
