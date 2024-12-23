@@ -1541,10 +1541,11 @@ export default {
           item.rate = item.price_list_rate;
         }
       }
-      if (item.discount_percentage) {
-        console.log("item.discount_percentage", item.discount_percentage, this.discount_amount, this.offer_discount_percentage);
-        
-        if(item.discount_percentage > this.offer_discount_percentage){
+      if (item.discount_percentage) {        
+        if(this.offer_discount_percentage >= item.discount_percentage){
+          item.rate = flt(item.price_list_rate);
+          item.discount_amount = 0;
+        }else{
           item.rate =
             flt(item.price_list_rate) -
             (flt(item.price_list_rate) * flt(item.discount_percentage)) / 100;
@@ -1552,9 +1553,6 @@ export default {
             flt(item.price_list_rate) - flt(item.rate),
             this.currency_precision
         );
-        }else{
-          item.rate = flt(item.price_list_rate);
-          item.discount_amount = 0;
         }
       } else if (item.discount_amount) {
         item.rate = this.flt(
@@ -2406,7 +2404,7 @@ export default {
         offer.discount_percentage > 0 &&
         offer.discount_percentage <= 100
       ) {
-        if(offer.discount_percentage > this.item_discount_percentage){
+        if(offer.discount_percentage >= this.item_discount_percentage){
           this.discount_amount = this.flt(
             (flt(this.discount_total) * flt(offer.discount_percentage)) / 100,
             this.currency_precision
