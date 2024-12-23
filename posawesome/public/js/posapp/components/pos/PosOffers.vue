@@ -157,7 +157,7 @@ export default {
           pos_offer.items = offer.items;
           if (
             pos_offer.offer === 'Grand Total' &&
-            !this.discount_percentage_offer_name
+            this.discount_percentage_offer_name
           ) {
             pos_offer.offer_applied = !!pos_offer.auto;
           }
