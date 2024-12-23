@@ -438,6 +438,8 @@ export default {
       customer_info: "",
       discount_amount: 0,
       additional_discount_percentage: 0,
+      offer_discount_percentage: 0,
+      item_discount_percentage: 0,
       total_tax: 0,
       items: [],
       posOffers: [],
@@ -1533,19 +1535,27 @@ export default {
     },
 
     calc_item_price(item) {
+      this.item_discount_percentage = item.discount_percentage;
       if (!item.posa_offer_applied) {
         if (item.price_list_rate) {
           item.rate = item.price_list_rate;
         }
       }
       if (item.discount_percentage) {
-        item.rate =
-          flt(item.price_list_rate) -
-          (flt(item.price_list_rate) * flt(item.discount_percentage)) / 100;
-        item.discount_amount = this.flt(
-          flt(item.price_list_rate) - flt(item.rate),
-          this.currency_precision
+        console.log("item.discount_percentage", item.discount_percentage, this.discount_amount, this.offer_discount_percentage);
+        
+        if(item.discount_percentage > this.offer_discount_percentage){
+          item.rate =
+            flt(item.price_list_rate) -
+            (flt(item.price_list_rate) * flt(item.discount_percentage)) / 100;
+          item.discount_amount = this.flt(
+            flt(item.price_list_rate) - flt(item.rate),
+            this.currency_precision
         );
+        }else{
+          item.rate = flt(item.price_list_rate);
+          item.discount_amount = 0;
+        }
       } else if (item.discount_amount) {
         item.rate = this.flt(
           flt(item.price_list_rate) - flt(item.discount_amount),
@@ -2386,6 +2396,7 @@ export default {
     },
 
     ApplyOnTotal(offer) {
+      this.offer_discount_percentage = offer.discount_percentage;
       if (!offer.name) {
         offer = this.posOffers.find((el) => el.name == offer.offer_name);
       }
@@ -2395,10 +2406,14 @@ export default {
         offer.discount_percentage > 0 &&
         offer.discount_percentage <= 100
       ) {
-        this.discount_amount = this.flt(
-          (flt(this.discount_total) * flt(offer.discount_percentage)) / 100,
-          this.currency_precision
-        );
+        if(offer.discount_percentage > this.item_discount_percentage){
+          this.discount_amount = this.flt(
+            (flt(this.discount_total) * flt(offer.discount_percentage)) / 100,
+            this.currency_precision
+          );
+        }else{
+          this.discount_amount = 0;
+        }
         this.discount_percentage_offer_name = offer.name;
       }
     },
