@@ -2405,6 +2405,9 @@ export default {
             (flt(this.discount_total) * flt(offer.discount_percentage)) / 100,
             this.currency_precision
           );
+          this.items.forEach((item) => {
+            item.discount_amount = 0;
+      });
         }else{
           this.discount_amount = 0;
         }
