@@ -521,7 +521,9 @@ export default {
     total_items_discount_amount() {
       let sum = 0;
       this.items.forEach((item) => {
+        if (item.custom_discount_allowed ){
         sum += flt(item.qty) * flt(item.discount_amount);
+        }
       });
       return this.flt(sum, this.float_precision);
     },
@@ -1343,6 +1345,7 @@ export default {
     },
 
     update_item_detail(item) {
+      console.log("item-", item)
       if (!item.item_code || this.invoice_doc.is_return) {
         return;
       }
@@ -1379,6 +1382,7 @@ export default {
           },
         },
         callback: function (r) {
+          console.log("update item",r.message ,vm.pos_profile.posa_apply_customer_discount ,vm.customer_info.posa_discount > 0 , vm.customer_info.posa_discount <= 100)
           if (r.message) {
             const data = r.message;
             if (data.batch_no_data) {
@@ -1396,13 +1400,15 @@ export default {
             if (data.has_pricing_rule) {
             } else if (
               vm.pos_profile.posa_apply_customer_discount &&
-              vm.customer_info.posa_discount > 0 &&
+              vm.customer_info.posa_discount >= 0 &&
               vm.customer_info.posa_discount <= 100
             ) {
+              
               if (
                 item.posa_is_offer == 0 &&
                 !item.posa_is_replace &&
-                item.posa_offer_applied == 0
+                item.posa_offer_applied == 0 &&
+                item.custom_discount_allowed 
               ) {
                 if (item.max_discount > 0) {
                   item.discount_percentage =
@@ -1410,7 +1416,15 @@ export default {
                       ? item.max_discount
                       : vm.customer_info.posa_discount;
                 } else {
-                  item.discount_percentage = vm.customer_info.posa_discount;
+                  console.log("customer  discount")
+                  if(vm.customer_info.posa_discount == 0){
+                    item.discount_percentage = vm.customer_info.posa_discount;
+                    item.discount_amount = 0;
+                  }
+                  else{
+                    item.discount_percentage = vm.customer_info.posa_discount;
+
+                  }
                 }
               }
             }
@@ -1486,6 +1500,7 @@ export default {
       evntBus.$emit("update_customer_price_list", price_list);
     },
     update_discount_umount() {
+      console.log("update_discount_umount", this.discount_amount)
       const value = flt(this.additional_discount_percentage);
       if (value >= -100 && value <= 100) {
         this.discount_amount = (this.discount_total * value) / 100;
@@ -1516,6 +1531,8 @@ export default {
         } else {
           item.rate = flt(item.price_list_rate) - flt(value);
           item.discount_percentage = 0;
+          item.discount_amount = 0;
+
         }
       } else if (event.target.id === "discount_percentage") {
         if (value < 0) {
@@ -1536,16 +1553,23 @@ export default {
     },
 
     calc_item_price(item) {
+      console.log("Items---------", item)
       this.item_discount_percentage = item.discount_percentage;
       if (!item.posa_offer_applied) {
         if (item.price_list_rate) {
           item.rate = item.price_list_rate;
         }
       }
-      if (item.discount_percentage) {        
+      if (item.discount_percentage) {  
+        if(item.discount_percentage == 0){
+          item.discount_amount = 0;
+        }
         if(this.offer_discount_percentage >= item.discount_percentage){
+          
           item.rate = flt(item.price_list_rate);
           item.discount_amount = 0;
+          item.discount_percentage = 0;
+      
         }else{
           item.rate =
             flt(item.price_list_rate) -
@@ -2402,12 +2426,14 @@ export default {
         offer.discount_percentage <= 100
       ) {
         if(offer.discount_percentage >= this.item_discount_percentage){
+          console.log("1--------------")
           this.discount_amount = this.flt(
             (flt(this.discount_total) * flt(offer.discount_percentage)) / 100,
             this.currency_precision
           );
           this.items.forEach((item) => {
             item.discount_amount = 0;
+            item.discount_percentage = 0;
       });
         }else{
           this.discount_amount = 0;
@@ -2657,12 +2683,21 @@ export default {
   watch: {
     customer() {
       this.close_payments();
+      console.log("customer",this.customer_info);
       evntBus.$emit("set_customer", this.customer);
       this.fetch_customer_details();
       this.set_delivery_charges();
+      this.items.forEach((item) => {
+        this.update_item_detail(item);
+      });
+      console.log("customer 1", this.customer_info)
+      console.log("customer 2", this.customer)
+      
     },
     customer_info() {
       evntBus.$emit("set_customer_info_to_edit", this.customer_info);
+    
+      
     },
     expanded(data_value) {
       // this.update_items_details(data_value);
