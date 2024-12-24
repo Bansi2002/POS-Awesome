@@ -122,7 +122,7 @@
                     <v-text-field dense outlined color="primary" :label="frappe._('QTY')" background-color="white"
                       hide-details :value="item.qty" @change="
                         [
-                          setFormatedFloat(item, 'qty', null, false, $event),
+                        item.qty = Math.floor(setFormatedFloat(item, 'qty', 0, false, $event)),
                           calc_stock_qty(item, $event),
                         ]
                         " :rules="[isNumber]"
@@ -500,7 +500,8 @@ export default {
     discount_total() {
       let sum = 0;
       this.items.forEach((item) => {
-        if (item.custom_discount_allowed) {
+        if (item.custom_discount_allowed && item.posa_offers && item.posa_offers != "[]"){
+
           sum += flt(item.qty) * flt(item.rate);
         }
       });
@@ -1487,7 +1488,7 @@ export default {
     update_discount_umount() {
       const value = flt(this.additional_discount_percentage);
       if (value >= -100 && value <= 100) {
-        this.discount_amount = (this.Total * value) / 100;
+        this.discount_amount = (this.discount_total * value) / 100;
       } else {
         this.additional_discount_percentage = 0;
         this.discount_amount = 0;
@@ -1747,7 +1748,7 @@ export default {
           }
         }
       });
-      console.log("Offers",offers)
+
 
       this.setItemGiveOffer(offers);
       this.updatePosOffers(offers);
@@ -1944,8 +1945,6 @@ export default {
       });
       // Remove duplicate item groups
       const group_name_list = [...new Set(get_group_name_list(all_group_data))];
-      console.log("Group name list: " , offer_item_group_list)
-      console.log("Group name Offer: " ,offer)
 
       // check if apply offer on item item group
       if (offer.apply_on === "Item Group") {
@@ -1954,7 +1953,6 @@ export default {
           let total_count = 0;
           let total_amount = 0;
           this.items.forEach((item) => {
-            console.log("a[ppply]",item)
             // Match the item group with the offer item group and include the item group in the specified array.
             if (!item.posa_is_offer && item.custom_discount_allowed && (item.item_group === offer.item_group || group_name_list.includes(item.item_group) || offer_item_group_list.includes(item.item_group))) {
               if (
@@ -1983,7 +1981,6 @@ export default {
           }
         }
       }
-      console.log("result", apply_offer)
       return apply_offer;
     },
 
