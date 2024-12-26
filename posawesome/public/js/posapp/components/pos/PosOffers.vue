@@ -159,7 +159,7 @@ export default {
             pos_offer.offer === 'Grand Total' &&
             this.discount_percentage_offer_name
           ) {
-            pos_offer.offer_applied = !!pos_offer.auto;
+            pos_offer.offer_applied = !!pos_offer.auto; 
           }
           if (
             offer.apply_on == 'Item Group' &&
@@ -217,6 +217,7 @@ export default {
   
         (offer) => offer.offer_applied
       );
+      evntBus.$emit('update_pos_invoice_offers');
       evntBus.$emit('update_invoice_offers', applyedOffers);
     },
     handleNewLine(str) {

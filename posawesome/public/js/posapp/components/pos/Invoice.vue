@@ -637,6 +637,10 @@ export default {
         this.set_serial_no(cur_item);
       }
       this.$forceUpdate();
+
+      this.items.forEach((item) => {
+        this.update_item_detail(item);
+      });
     },
 
     get_new_item(item) {
@@ -1423,10 +1427,10 @@ export default {
                   }
                   else{
                     item.discount_percentage = vm.customer_info.posa_discount;
-
-                  }
+                                
                 }
               }
+            }
             }
             if (!item.batch_price) {
               if (
@@ -1553,7 +1557,6 @@ export default {
     },
 
     calc_item_price(item) {
-      console.log("Items---------", item)
       this.item_discount_percentage = item.discount_percentage;
       if (!item.posa_offer_applied) {
         if (item.price_list_rate) {
@@ -1565,12 +1568,11 @@ export default {
           item.discount_amount = 0;
         }
         if(this.offer_discount_percentage >= item.discount_percentage){
-          
-          item.rate = flt(item.price_list_rate);
+          item.rate =  flt(item.price_list_rate)
           item.discount_amount = 0;
           item.discount_percentage = 0;
-      
         }else{
+          
           item.rate =
             flt(item.price_list_rate) -
             (flt(item.price_list_rate) * flt(item.discount_percentage)) / 100;
@@ -2447,6 +2449,7 @@ export default {
         this.discount_percentage_offer_name &&
         this.discount_percentage_offer_name == offer.offer_name
       ) {
+        this.offer_discount_percentage = 0
         this.discount_amount = 0;
         this.discount_percentage_offer_name = null;
       }
@@ -2603,6 +2606,9 @@ export default {
     });
     evntBus.$on("add_item", (item) => {
       this.add_item(item);
+      this.items.forEach((item) => {
+        this.update_item_detail(item);
+      });
     });
     evntBus.$on("update_customer", (customer) => {
       this.customer = customer;
@@ -2636,6 +2642,10 @@ export default {
     evntBus.$on("update_invoice_offers", (data) => {
       this.updateInvoiceOffers(data);
     });
+    evntBus.$on("update_pos_invoice_offers",()=> {
+      this.offer_discount_percentage = 0;
+    }
+    );
     evntBus.$on("update_invoice_coupons", (data) => {
       this.posa_coupons = data;
       this.handelOffers();
