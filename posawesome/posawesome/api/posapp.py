@@ -560,6 +560,38 @@ def submit_invoice(invoice, data):
     invoice = json.loads(invoice)
     invoice_doc = frappe.get_doc("Sales Invoice", invoice.get("name"))
     invoice_doc.update(invoice)
+    
+    # ADD CUSTOM LOGIC FOR VAT
+    if invoice_doc.taxes and len(invoice_doc.taxes) > 0:
+
+        last_row_idx = len(invoice_doc.taxes)
+
+        # If first tax row is VAT and last tax row is not "On Previous Row Total"
+        if (
+            invoice_doc.taxes[0].description == "VAT"
+            and invoice_doc.taxes[-1].charge_type != "On Previous Row Total"
+        ):
+            first_tax_row = invoice_doc.taxes[0]
+            invoice_doc.remove(invoice_doc.taxes[0])  # remove first row
+            first_tax_row.charge_type = "On Previous Row Total"
+            invoice_doc.append("taxes", first_tax_row)  # push to last
+
+        # Set row_id for last row
+        invoice_doc.taxes[-1].row_id = last_row_idx - 1
+
+        # Reindex rows
+        for idx, row in enumerate(invoice_doc.taxes, start=1):
+            row.idx = idx
+
+        # Validate duplicates
+        idx_set = set()
+        for row in invoice_doc.taxes:
+            if not row.idx:
+                frappe.throw("Row ID is missing for some tax rows.")
+            if row.idx in idx_set:
+                frappe.throw(f"Duplicate Row ID found: {row.idx}")
+            idx_set.add(row.idx)
+            
     if invoice.get("posa_delivery_date"):
         invoice_doc.update_stock = 0
     mop_cash_list = [
